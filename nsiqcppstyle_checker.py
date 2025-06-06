@@ -33,6 +33,8 @@ from copy import deepcopy
 from nsiqcppstyle_outputer import _consoleOutputer as console
 from nsiqcppstyle_rulehelper import *  # @UnusedWildImport
 
+import chardet
+
 # Reserved words
 
 tokens = [
@@ -404,7 +406,8 @@ class CppLexerNavigator:
         lexer = nsiqcppstyle_lexer.lex()
         self.data = data
         if data is None:
-            with open(filename) as f:
+            encoding = self.DetectEncoding(file_path=filename)
+            with open(filename, "r", encoding=encoding) as f:
                 try:
                     self.data = f.read()
                 except UnicodeDecodeError as ex:
@@ -925,6 +928,12 @@ class CppLexerNavigator:
         if token_id3 is None and token_id2 is not None:
             return True
         return bool(token_id2 is not None and token_id2.lexpos < token_id3.lexpos)
+
+    def DetectEncoding(self, file_path):
+        with open(file_path, 'rb') as f:
+            raw_data = f.read()
+            result = chardet.detect(raw_data)
+            return result['encoding']
 
 
 class Context:
