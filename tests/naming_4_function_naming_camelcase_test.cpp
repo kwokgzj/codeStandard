@@ -21,10 +21,16 @@ void HelloWorld() {           // 错误：首字母大写
 void Do_Something() {         // 错误：包含下划线
 }
 
-void CALCULATE() {            // 错误：全大写
+void CALCULATE() {
+            // 错误：全大写
+
+
 }
 
 void Pascal_Case_Wrong() {    // 错误：Pascal命名法
+
+
+
 }
 
 // 测试3：类成员函数
