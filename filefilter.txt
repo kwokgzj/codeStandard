@@ -51,3 +51,4 @@
 ~ RULE_RV_format_3_no_indent_in_namespace
 ~ RULE_RV_format_5_A_write_less_than_50_lines_for_function
 ~ RULE_RV_format_5_B_write_less_than_2000_lines_for_file
+~ RULE_RV_braces_1_braces_for_type_definition_should_be_located_in_new_line
