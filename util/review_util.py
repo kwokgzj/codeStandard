@@ -72,44 +72,45 @@ def is_camel_case(string):
     pattern = r'^[a-z][a-zA-Z0-9]*([A-Z][a-zA-Z0-9]*)*$'
     return bool(re.match(pattern, string))
 
+
 def is_macro_name(string):
     """
-    验证给定字符串是否符合C++宏定义的命名规范
-    
-    C++宏定义命名规范要求：
+    验证给定字符串是否符合全大写下划线命名规范
+
+    命名规范要求：
     1. 所有字母都是大写
-    2. 单词之间用下划线分隔
+    2. 单词和数字之间用下划线分隔
     3. 可以包含数字
     4. 不能以数字开头
     5. 不能包含除下划线外的其他特殊字符
-    
+
     Args:
         string (str): 需要验证的字符串
-    
+
     Returns:
-        bool: 如果符合C++宏定义命名规范返回True，否则返回False
+        bool: 如果符合命名规范返回True，否则返回False
     """
     # 检查是否为空字符串
     if not string:
         return False
-    
-    # 检查是否以字母或下划线开头（不能以数字开头）
-    if not (string[0].isalpha() or string[0] == '_'):
+
+    # 检查是否以字母开头（不能以数字或下划线开头）
+    if not string[0].isalpha():
         return False
-    
+
     # 检查是否只包含大写字母、数字和下划线
     if not all(c.isupper() or c.isdigit() or c == '_' for c in string):
         return False
-    
+
     # 检查是否有连续的下划线
     if '__' in string:
         return False
-    
-    # 检查是否以下划线开头或结尾
-    if string.startswith('_') or string.endswith('_'):
+
+    # 检查是否以下划线结尾
+    if string.endswith('_'):
         return False
-    
-    # 使用正则表达式进行更严格的检查
-    # 宏名称应该是由大写字母、数字和下划线组成，且单词之间用单个下划线分隔
-    pattern = r'^[A-Z][A-Z0-9]*(_[A-Z][A-Z0-9]*)*$'
+
+    # 使用更宽松的正则表达式进行检查
+    # 允许数字前后都可以有下划线
+    pattern = r'^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'
     return bool(re.match(pattern, string))

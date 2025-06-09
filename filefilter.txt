@@ -42,3 +42,4 @@
 ~ RULE_RV_naming_1_B_struct_naming_pascalcase_noprefixes
 ~ RULE_RV_naming_1_C_enum_naming_pascalcase_noprefixes
 ~ RULE_RV_naming_2_A_macro_naming_uppercase_underscores
+~ RULE_RV_naming_2_B_enum_item_naming_uppercase_underscores
