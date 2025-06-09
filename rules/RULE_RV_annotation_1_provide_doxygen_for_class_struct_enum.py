@@ -29,7 +29,9 @@ from nsiqcppstyle_rulehelper import *
 from nsiqcppstyle_rulemanager import *
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
-
+"""
+类必须注释
+"""
 def classRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
     if not decl and currentType == "CLASS" and typeContext is not None:
         t = lexer.GetCurToken()
@@ -51,6 +53,9 @@ def classRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
 
 ruleManager.AddTypeNameRule(classRunRule)
 
+"""
+结构体必须注释
+"""
 def structRunRule(lexer, currentType, fullName, decl, contextStack, context):
     if not decl and currentType in ("STRUCT", "UNION") and context is not None:
         t = lexer.GetCurToken()
@@ -72,6 +77,9 @@ def structRunRule(lexer, currentType, fullName, decl, contextStack, context):
 
 ruleManager.AddTypeNameRule(structRunRule)
 
+"""
+枚举类型必须注释
+"""
 def classRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
     if not decl and currentType == "ENUM" and typeContext is not None:
         t = lexer.GetCurToken()
@@ -92,3 +100,4 @@ def classRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
 
 
 ruleManager.AddTypeNameRule(classRunRule)
+

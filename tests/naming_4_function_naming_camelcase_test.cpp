@@ -41,6 +41,9 @@ public:
     void SetValue() {}               // 错误：首字母大写
     void PROCESS_DATA() {}           // 错误：全大写
     void handle_event() {}           // 错误：下划线
+private:
+    void init() {}                    // 正确：小驼峰
+    void Init() {}                    // 错误：首字母大写
 };
 
 // 测试4：模板函数
@@ -49,7 +52,7 @@ void processData() {                  // 正确：小驼峰
 }
 
 template<typename T>
-void Process_Template() {            // 错误：下划线和大写
+void Process_Template(int anddj) {            // 错误：下划线和大写
 }
 
 // 测试5：命名空间中的函数

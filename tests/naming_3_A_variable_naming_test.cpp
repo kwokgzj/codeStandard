@@ -36,7 +36,7 @@ private:
     int m_itemCount;       // 正确
     float m_averageValue;  // 正确
 
-    void calculate() {
+    void calculate(int AAA) {
         int tempResult;    // 正确
         bool g_flag;       // 错误：局部变量不应使用g_前缀
         int m_temp;        // 错误：局部变量不应使用m_前缀
