@@ -58,7 +58,7 @@ void processData() {                  // 正确：小驼峰
 }
 
 template<typename T>
-void Process_Template(int anddj) {            // 错误：下划线和大写
+void Process_Template(int anddj, int AAA) {            // 错误：下划线和大写
 }
 
 // 测试5：命名空间中的函数
@@ -74,7 +74,7 @@ namespace MyNamespace {
 static void loadConfig() {           // 正确：小驼峰
 }
 
-static void Load_Config() {          // 错误：下划线和大写
+static void Load_Config(int S, int JDKS, int jfk_fjdk) {          // 错误：下划线和大写
 }
 
 // 测试7：内联函数
