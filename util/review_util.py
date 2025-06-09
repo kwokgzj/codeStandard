@@ -114,3 +114,57 @@ def is_macro_name(string):
     # 允许数字前后都可以有下划线
     pattern = r'^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'
     return bool(re.match(pattern, string))
+
+def is_member_var_name(string):
+    """
+    验证给定字符串是否符合类成员变量命名规范（m_前缀 + 小驼峰）
+
+    命名规范要求：
+    1. 必须以m_开头
+    2. 前缀后的部分必须符合小驼峰命名规则
+    3. 不能包含下划线等特殊字符
+
+    Args:
+        string (str): 需要验证的字符串
+
+    Returns:
+        bool: 如果符合命名规范返回True，否则返回False
+    """
+    # 检查是否为空字符串或长度过短
+    if not string or len(string) < 3:
+        return False
+
+    # 检查是否以m_开头
+    if not string.startswith('m_'):
+        return False
+
+    # 检查m_后面的部分是否符合小驼峰规则
+    remainder = string[2:]
+    return is_camel_case(remainder)
+
+def is_global_var_name(string):
+    """
+    验证给定字符串是否符合全局变量命名规范（g_前缀 + 小驼峰）
+
+    命名规范要求：
+    1. 必须以g_开头
+    2. 前缀后的部分必须符合小驼峰命名规则
+    3. 不能包含下划线等特殊字符
+
+    Args:
+        string (str): 需要验证的字符串
+
+    Returns:
+        bool: 如果符合命名规范返回True，否则返回False
+    """
+    # 检查是否为空字符串或长度过短
+    if not string or len(string) < 3:
+        return False
+
+    # 检查是否以g_开头
+    if not string.startswith('g_'):
+        return False
+
+    # 检查g_后面的部分是否符合小驼峰规则
+    remainder = string[2:]
+    return is_camel_case(remainder)
