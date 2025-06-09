@@ -18,7 +18,6 @@ import util.review_util as rv
 
 def RunRule(lexer, contextStack):
     t = lexer.GetCurToken()
-    print("进来了" + t.value + " " + t.type)
     if t.type == "PREPROCESSOR" and t.value.find("define") != -1:
         d = lexer.GetNextTokenSkipWhiteSpaceAndComment()
         k2 = lexer.GetNextTokenSkipWhiteSpaceAndComment()

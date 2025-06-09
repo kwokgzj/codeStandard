@@ -47,3 +47,4 @@
 ~ RULE_RV_naming_3_A_variable_naming_camelcase
 ~ RULE_RV_format_1_four_spaces_indentation
 ~ RULE_RV_naming_4_function_naming_camelcase
+~ RULE_RV_format_2_do_not_write_over_140_columns_per_line
