@@ -52,3 +52,4 @@
 ~ RULE_RV_format_5_A_write_less_than_50_lines_for_function
 ~ RULE_RV_format_5_B_write_less_than_2000_lines_for_file
 ~ RULE_RV_braces_1_braces_for_type_definition_should_be_located_in_new_line
+~ RULE_RV_annotation_1_provide_doxygen_for_class_struct_enum
