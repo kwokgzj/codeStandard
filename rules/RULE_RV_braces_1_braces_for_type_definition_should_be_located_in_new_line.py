@@ -58,7 +58,9 @@ from nsiqcppstyle_rulehelper import *
 from nsiqcppstyle_rulemanager import *
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
-
+"""
+函数起始花括号{ 需要单独一行
+"""
 def functionRunRule(lexer, contextStack):
     t = lexer.GetCurToken()
     if t.type == "LBRACE":
@@ -72,6 +74,9 @@ def functionRunRule(lexer, contextStack):
 
 ruleManager.AddFunctionScopeRule(functionRunRule)
 
+"""
+类，结构体，枚举类型，命名空间的起始花括号{ 需要单独一行
+"""
 def typeRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
     if not decl and currentType != "NAMESPACE" and typeContext is not None:
         t = lexer.GetNextTokenInType("LBRACE", False, True)
@@ -119,3 +124,60 @@ ruleManager.AddTypeNameRule(typeRunRule)
 #
 #
 # ruleManager.AddTypeNameRule(namespaceRunRule)
+
+"""
+条件和循环语句（switch，try等）与左花括号同一行
+"""
+def controlRunRule(lexer, contextStack):
+    t = lexer.GetCurToken()
+    contextStack.SigPeek()
+
+    # 识别控制语句关键字
+    if t.type in ["IF", "ELSE", "FOR", "WHILE", "SWITCH", "TRY", "DO"]:
+        next_token = lexer.GetNextTokenInType("LBRACE", False, True)
+        if t is not None:
+            if next_token.lineno != t.lineno:
+                nsiqcppstyle_reporter.Error(
+                    t,
+                    __name__,
+                    f"{t.type} 要与左花括号在同一行",
+                )
+
+ruleManager.AddFunctionScopeRule(controlRunRule)
+
+"""
+右花括号单独一行
+"""
+def RightBraceRule(lexer, contextStack):
+    t = lexer.GetCurToken()
+
+    # 检查是否为右花括号
+    if t.type == "RBRACE":
+        # 获取同一行前面的非注释token
+        prev_token = lexer.GetPrevTokenSkipWhiteSpaceAndCommentAndPreprocess()
+
+        # 如果前面有token且在同一行(排除左花括号和注释的情况)
+        if prev_token and prev_token.lineno == t.lineno and prev_token.type != "LBRACE":
+            nsiqcppstyle_reporter.Error(
+                t,
+                __name__,
+                "右花括号必须单独一行"
+            )
+        #     return
+        #
+        # # 获取同一行后面的非注释token
+        # next_token = lexer.GetNextTokenSkipWhiteSpaceAndCommentAndPreprocess()
+        #
+        # # 排除else关键字、分号和注释的情况
+        # allowed_types = ["ELSE", "SEMI"]
+        # if (next_token and
+        #         next_token.lineno == t.lineno and
+        #         next_token.type not in allowed_types):
+        #     nsiqcppstyle_reporter.Error(
+        #         t,
+        #         __name__,
+        #         "右花括号必须单独一行"
+        #     )
+
+
+ruleManager.AddFunctionScopeRule(RightBraceRule)

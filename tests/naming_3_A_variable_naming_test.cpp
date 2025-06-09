@@ -21,6 +21,8 @@ class TestClass {
 
 // 测试3：函数中的局部变量
 void testFunction() {
+    if(true) {
+        int localCounter = 0;}
     int localCounter;       // 正确
     float tempValue;        // 正确
     bool m_isValid;        // 错误：局部变量不应使用m_前缀
@@ -38,8 +40,8 @@ private:
         int tempResult;    // 正确
         bool g_flag;       // 错误：局部变量不应使用g_前缀
         int m_temp;        // 错误：局部变量不应使用m_前缀
-    }
-};
+       }
+    };
 
 // 测试5：带数字的变量名
 int g_value2D;             // 正确
