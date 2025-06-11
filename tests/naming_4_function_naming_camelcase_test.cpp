@@ -3,6 +3,10 @@
  * - 必须使用小驼峰命名法
  * - 构造函数、析构函数和运算符重载函数除外
  */
+static const QMap<ScanObject, int> g_objectPriorityMap = { { ScanObject::SCAN_OBJECT_GENERAL, 0 }, { ScanObject::SCAN_OBJECT_DARK, 1 },
+                                                           { ScanObject::SCAN_OBJECT_FACE, 2 },    { ScanObject::SCAN_OBJECT_HEAD, 3 },
+                                                           { ScanObject::SCAN_OBJECT_BODY, 4 },    { ScanObject::SCAN_OBJECT_BODY_LARGE, 5 },
+                                                           { ScanObject::SCAN_OBJECT_LARGE, 6 } };
 
 // 测试1：正确的函数命名
 void sayHello() {              // 正确：小驼峰
