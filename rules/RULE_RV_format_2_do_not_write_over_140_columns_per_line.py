@@ -31,6 +31,9 @@ def RunRule(lexer, line, lineno):
     comment_start = line.find("//")
     if comment_start != -1:
         code_line = line[:comment_start]
+        
+    # 去除前后空白
+    code_line = code_line.strip()
 
     # 检查代码部分的长度
     if len(code_line) > 140:
