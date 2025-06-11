@@ -24,21 +24,46 @@ def _is_type_token(token):
 def _is_var_declaration(t1, t2):
     return (_is_type_token(t1) and t2.type in ["SEMI", "EQUALS"])
 
-def _check_comment(lexer, t):
+def _check_next_comment(lexer, t):
     lexer.PushTokenIndex()
-    t2 = lexer.GetPrevTokenInType("COMMENT")
+    next_comment = lexer.GetNextTokenInType("COMMENT")
     lexer.PopTokenIndex()
-    lexer.PushTokenIndex()
-    t3 = lexer.GetPrevTokenInTypeList(["SEMI", "PREPROCESSOR", "LBRACE"], False, True)
-    lexer.PopTokenIndex()
+    if next_comment is not None and next_comment.lineno == t.lineno:
+        return True
 
-    if t2 is not None and (t3 is None or t2.lexpos > t3.lexpos):
-        if t2.additional in ["DOXYGEN_JAVADOC", "DOXYGEN_QT", "DOXYGEN_CPP"]:
+def _check_prev_comment(lexer, t):
+    lexer.PushTokenIndex()
+    prev_comment = lexer.GetPrevTokenInType("COMMENT")
+    lexer.PopTokenIndex()
+    lexer.PushTokenIndex()
+    prev_semi = lexer.GetPrevTokenInType("SEMI")
+    lexer.PopTokenIndex()
+    if prev_comment is not None:
+        if prev_semi is not None:
+            if prev_semi.lineno < prev_comment.lineno:
+                return True
+            else:
+                return False
+        else:
             return True
-    return False
+    else:
+        return False
+
+def _check_comment_divide(lexer, t):
+    line_text = ""
+    while True:
+        next_token = lexer.GetNextToken(False, False, False)
+        if next_token is None or next_token.lineno != t.lineno:
+            break
+        if next_token.value != ";":
+            line_text += next_token.value
+    if line_text.lstrip().startswith("//"):
+        return True
 
 def RunRule(lexer, contextStack):
+    lexer.PushTokenIndex()
     t = lexer.GetCurToken()
+    lexer.PopTokenIndex()
     if t.type != "ID":
         return
 
@@ -53,13 +78,13 @@ def RunRule(lexer, contextStack):
 
     # 全局变量注释检查
     if curContext is None or curContext.type in ["NAMESPACE_BLOCK"]:
-        if name.startswith("g_") and not _check_comment(lexer, t):
+        if name.startswith("g_") and not _check_prev_comment(lexer, t) and not _check_comment_divide(lexer, t) and not _check_next_comment(lexer, t):
             nsiqcppstyle_reporter.Error(t, __name__,
                 f"全局变量 '{name}' 必须有注释")
 
     # 类成员变量注释检查
     elif curContext is None or curContext.type in ["CLASS_BLOCK"]:
-        if name.startswith("m_") and not _check_comment(lexer, t):
+        if name.startswith("m_") and not _check_prev_comment(lexer, t) and not _check_comment_divide(lexer, t) and not _check_next_comment(lexer, t):
             nsiqcppstyle_reporter.Error(t, __name__,
                 f"类成员变量 '{name}' 必须有注释")
 

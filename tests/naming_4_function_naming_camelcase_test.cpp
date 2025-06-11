@@ -82,6 +82,8 @@ inline void updateCache() {          // 正确：小驼峰
 }
 
 inline void Update_Cache() {         // 错误：下划线和大写
+    if(true) {
+        int temp = 0;}
 }
 
 // 测试8：友元函数
@@ -102,13 +104,22 @@ private:
      */
     int m_value1;
     /**
-     * @brief 是否激活
+     * @brief 是否激活;
      */
     bool m_isActive;
+    /**
+     * @brief 用户年龄
+     */
+    int m_age;
+    /*
+      这是一个多行注释
+      用于描述成员变量
+    */
+    bool m_isEnabled;      /*这是一个多行注释用于描述成员变量*/
+    bool m_isEnabled1;
 };
 
 // 测试10：纯虚函数
 class Pure {
     virtual void draw() = 0;         // 正确：小驼峰
-    virtual void Draw() = 0;         // 错误：首字母大写
-};
+    virtual void Draw() = 0;         };

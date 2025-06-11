@@ -73,13 +73,7 @@ def functionRunRule(lexer, fullName, decl, contextStack, typeContext):
                     nsiqcppstyle_reporter.Error(
                         t,
                         __name__,
-                        "函数的左花括号需要单独一行",
-                    )
-                if t2.lineno != t.lineno and GetRealColumn(t2) != GetRealColumn(t):
-                    nsiqcppstyle_reporter.Error(
-                        t2,
-                        __name__,
-                        "The brace for function definition should be located in same column",
+                        f"函数的左花括号需要单独一行",
                     )
 
 
@@ -111,30 +105,6 @@ def typeRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
 
 
 ruleManager.AddTypeNameRule(typeRunRule)
-
-# def namespaceRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
-#     if not decl and currentType == "NAMESPACE" and typeContext is not None:
-#         t = lexer.GetNextTokenInType("LBRACE", False, True)
-#         if t is not None:
-#             t2 = typeContext.endToken
-#             if t2 is not None and t.lineno != t2.lineno:
-#                 prevToken = lexer.GetPrevTokenSkipWhiteSpaceAndCommentAndPreprocess()
-#                 # print contextStack.Peek()
-#                 if prevToken is not None and prevToken.lineno == t.lineno:
-#                     nsiqcppstyle_reporter.Error(
-#                         t,
-#                         __name__,
-#                         "The brace for type definition should be located in start of line",
-#                     )
-#                 # if t2.lineno != t.lineno and GetRealColumn(t2) != GetRealColumn(t):
-#                 #     nsiqcppstyle_reporter.Error(
-#                 #         t2,
-#                 #         __name__,
-#                 #         "The brace for type definition should be located in same column",
-#                 #     )
-#
-#
-# ruleManager.AddTypeNameRule(namespaceRunRule)
 
 """
 条件和循环语句（switch，try等）与左花括号同一行
@@ -174,21 +144,8 @@ def RightBraceRule(lexer, contextStack):
                 __name__,
                 "右花括号必须单独一行"
             )
-        #     return
-        #
-        # # 获取同一行后面的非注释token
-        # next_token = lexer.GetNextTokenSkipWhiteSpaceAndCommentAndPreprocess()
-        #
-        # # 排除else关键字、分号和注释的情况
-        # allowed_types = ["ELSE", "SEMI"]
-        # if (next_token and
-        #         next_token.lineno == t.lineno and
-        #         next_token.type not in allowed_types):
-        #     nsiqcppstyle_reporter.Error(
-        #         t,
-        #         __name__,
-        #         "右花括号必须单独一行"
-        #     )
 
 
-ruleManager.AddFunctionScopeRule(RightBraceRule)
+# ruleManager.AddFunctionScopeRule(RightBraceRule)
+ruleManager.AddRule(RightBraceRule)
+
