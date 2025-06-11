@@ -625,11 +625,32 @@ def is_xml_format_correct(xml_text):
         logger.error(f" 处理 XML 时发生错误： ‘{str(e)}’ ---- 详细内容如下 : '{xml_text}' ")
         return False
 
+
 def DetectEncoding(file_path):
-    with open(file_path, 'rb') as f:
-        raw_data = f.read()
-        result = chardet.detect(raw_data)
-        return result['encoding']
+    try:
+        # 首先尝试以二进制模式读取文件
+        with open(file_path, 'rb') as f:
+            raw_data = f.read()
+            # 使用chardet检测编码
+            result = chardet.detect(raw_data)
+            detected_encoding = result['encoding']
+
+            # 如果检测失败或置信度较低，使用常见编码列表
+            if not detected_encoding or result['confidence'] < 0.7:
+                # 尝试常见编码
+                for encoding in ['utf-8', 'gbk', 'gb2312', 'ascii', 'iso-8859-1']:
+                    try:
+                        raw_data.decode(encoding)
+                        return encoding
+                    except UnicodeDecodeError:
+                        continue
+                # 如果都失败，返回默认编码
+                return 'utf-8'
+
+            return detected_encoding
+    except Exception as e:
+        # 发生异常时返回默认编码
+        return 'utf-8'
 
 # dify代码规范性检查
 def check_code_standard(filePath, code):
@@ -705,6 +726,32 @@ def check_standards(data):
                 logger.info(f"{entry['filePath']}规范检查的结果中有无效的issues:")
                 for i, (issue, reason) in enumerate(invalid_issues, 1):
                     logger.info(f"\n无效issue {i}: 原因: {reason} 。 内容：{issue}")
+
+        entry_time = time.time() - entry_start_time
+        elapsed_time = time.time() - total_start_time
+        if(successCount == 0):
+            avg_time_per_file = 60
+        else:
+            avg_time_per_file = elapsed_time / successCount
+        remaining_files = total_files - i
+        estimated_remaining = avg_time_per_file * remaining_files
+        logger.info(f"Standards Check: File {entry['filePath']} takes {entry_time:.2f}s , current progress - {i}/{total_files} ({(i / total_files) * 100:.1f}%) , Elapsed: {format_time(elapsed_time)} / Remaining: {format_time(estimated_remaining)}")
+
+    total_time = time.time() - total_start_time
+    logger.info(f"Standards Check: All {total_files} files completed. Total time: {format_time(total_time)}\n")
+
+def check_standards_with_script(data):
+    review_result_path = os.path.join(outputPath, "reviewResult1.xml")
+    if not os.path.exists(review_result_path):
+        with open(review_result_path, "w", encoding="utf-8") as f:
+            f.write("")  # 创建空文件
+    total_start_time = time.time()
+    total_files = len(data)
+    successCount = 0
+    for i, entry in enumerate(data, 1):
+        entry_start_time = time.time()
+
+        run_code_standards_script(entry['filePath'])
 
         entry_time = time.time() - entry_start_time
         elapsed_time = time.time() - total_start_time
@@ -856,6 +903,84 @@ def init_logger(output_path):
     logger = setup_logger(os.path.join(output_path, 'codeReview.log'))
     return logger
 
+def run_code_standards_script(file_path):
+    """调用外部脚本进行处理"""
+    current_dir = os.getcwd()
+    try:
+        nsiqcppstyle_path = f'"{os.path.join(codePath, "nsiqcppstyle.py")}"'
+        source_file = f'"{os.path.join(sourcePath, file_path)}"'
+        filter_file = f'"{os.path.join(codePath, "filefilter.txt")}"'
+        output_dir = f'"{outputPath}"'
+
+        cmd = f'python {nsiqcppstyle_path} {source_file} -f {filter_file} --output xml -o {output_dir}'
+        retcode = os.system(cmd)
+    except Exception as e:
+        logger.error(f"执行规范检查脚本时发生错误: {str(e)}")
+        return False
+    convert_nsiqcppstyle_report(file_path)
+    return True
+
+
+def convert_nsiqcppstyle_report(file_path):
+    """
+    转换nsiqcppstyle_report.xml为指定的issue格式
+    参数:
+        file_path: 要写入issue的目标文件路径
+    """
+    review_result_path = os.path.join(outputPath, "reviewResult1.xml")
+    if not os.path.exists(review_result_path):
+        return False
+    report_path = os.path.join(outputPath, "nsiqcppstyle_report.xml")
+    if not os.path.exists(report_path):
+        return False
+    try:
+        # 以二进制模式读取文件内容
+        with open(report_path, 'rb') as f:
+            content = f.read()
+            # 检测文件编码
+            result = chardet.detect(content)
+            encoding = result['encoding']
+
+        # 使用检测到的编码重新读取文件
+        with open(report_path, 'r', encoding=encoding) as f:
+            content = f.read()
+            # 移除可能的BOM标记
+            if content.startswith('\ufeff'):
+                content = content[1:]
+            # 解析XML
+            root = ET.fromstring(content)
+
+        # 获取输出文件的编码
+        encoding_out = DetectEncoding(review_result_path)
+
+        # 打开目标文件以追加模式写入
+        with open(review_result_path, "a", encoding=encoding_out) as f:
+            # 遍历所有error元素
+            for error in root.findall('.//error'):
+                line = error.get('line', '')
+                message = error.get('message', '').encode('utf-8').decode('utf-8')
+
+                # 创建标准格式的issue
+                issue = f"""<issue>
+    <type><![CDATA[CODE_SPECIFICATION]]></type>
+    <description><![CDATA[{message}]]></description>
+    <priority><![CDATA[LOW]]></priority>
+    <path><![CDATA[{file_path}]]></path>
+    <line><![CDATA[{line}]]></line>
+</issue>
+"""
+                # 写入文件
+                f.write(issue)
+
+        return True
+
+    except ET.ParseError as e:
+        logger.error(f"解析nsiqcppstyle报告时发生错误: {str(e)}")
+        return False
+    except Exception as e:
+        logger.error(f"转换nsiqcppstyle报告时发生错误: {str(e)}")
+        return False
+
 def main():
     current_dir = os.getcwd()
     logger.info(f"Current checking directory: {current_dir}")
@@ -891,8 +1016,7 @@ def main():
         logger.info(f"^^^^^^^^^^^ file_paths : {sourcePath}...")
 
         # Write paths to fileListPath
-        encoding = DetectEncoding(file_path=changedFiles)
-        with open(changedFiles, "w", encoding=encoding) as f:
+        with open(changedFiles, "w", encoding="utf-8") as f:
             f.write("\n".join(file_paths))
             logger.info(f"^^^^^^^^^^^ Write paths to fileListPath")
         logger.info(f"Created file list at: {changedFiles}")
@@ -926,7 +1050,7 @@ def main():
     threads = []
 
     if checkType in ["standards", "both"]:
-        standards_thread = threading.Thread(target=check_standards, args=(data,))
+        standards_thread = threading.Thread(target=check_standards_with_script, args=(data,))
         threads.append(standards_thread)
         standards_thread.start()
 
@@ -948,28 +1072,30 @@ def main():
 
     content1 = ""
     content2 = ""
-
-    try:
-        encoding = DetectEncoding(file_path=os.path.join(outputPath, "reviewResult1.xml"))
-        with open(os.path.join(outputPath, "reviewResult1.xml"), "r", encoding=encoding) as f:
-            content = f.read()
-            # 确保content是字符串类型
-            content1 = content or ""
-    except Exception as e:
-        content1 = ""
-        logger.error(f" 处理 reviewResult1.xml 时发生错误： ‘{str(e)}’ ")
-
-    try:
-        encoding = DetectEncoding(file_path=os.path.join(outputPath, "reviewResult2.xml"))
-        with open(os.path.join(outputPath, "reviewResult2.xml"), "r", encoding=encoding) as f:
-            content = f.read()
-            # 确保content是字符串类型
-            content2 = content or ""
-    except Exception as e:
-        content2 = ""
-        logger.error(f" 处理 reviewResult2.xml 时发生错误： ‘{str(e)}’ ")
-    encoding = DetectEncoding(file_path=os.path.join(outputPath, "reviewResult.xml"))
-    with open(os.path.join(outputPath, "reviewResult.xml"), "w", encoding=encoding) as f:
+    review_result1_path = os.path.join(outputPath, "reviewResult1.xml")
+    if os.path.exists(review_result1_path):
+        try:
+            encoding = DetectEncoding(file_path=review_result1_path)
+            with open(review_result1_path, "r", encoding=encoding) as f:
+                content = f.read()
+                # 确保content是字符串类型
+                content1 = content or ""
+        except Exception as e:
+            content1 = ""
+            logger.error(f" 处理 reviewResult1.xml 时发生错误： ‘{str(e)}’ ")
+    review_result2_path = os.path.join(outputPath, "reviewResult2.xml")
+    if os.path.exists(review_result2_path):
+        try:
+            encoding = DetectEncoding(file_path=review_result2_path)
+            with open(review_result2_path, "r", encoding=encoding) as f:
+                content = f.read()
+                # 确保content是字符串类型
+                content2 = content or ""
+        except Exception as e:
+            content2 = ""
+            logger.error(f" 处理 reviewResult2.xml 时发生错误： ‘{str(e)}’ ")
+    encoding = DetectEncoding(file_path=review_result_path)
+    with open(review_result_path, "w", encoding=encoding) as f:
         header = '<results label="CodeReviewer" version="1.0">\n'
         footer = "</results>"
         # 组合所有内容并确保都是字符串
@@ -990,6 +1116,9 @@ if __name__ == "__main__":
     parser.add_argument("--sourcePath", type=str, default="", required=True,
                         help="Root directory path containing all source files to be reviewed")
 
+    parser.add_argument("--codePath", type=str, default="", required=True,
+                        help="Root directory path containing all source files to be reviewed")
+
     parser.add_argument("--checkDirs", type=str, nargs="*", default=[],
                         help="Specific directories to check within the source path. If empty, all directories will be checked")
 
@@ -1002,7 +1131,7 @@ if __name__ == "__main__":
     parser.add_argument("--standardsTimeout", type=int, default=800,
                         help="Timeout in seconds for standards check API calls (default: 800)")
 
-    parser.add_argument("--bugsTimeout", type=int, default=120,
+    parser.add_argument("--bugsTimeout", type=int, default=300,
                         help="Timeout in seconds for bugs check API calls (default: 120)")
 
     parser.add_argument("--maxRetries", type=int, default=3,
@@ -1012,7 +1141,7 @@ if __name__ == "__main__":
                         help="Initial delay in seconds between retry attempts (default: 2)")
 
     args = parser.parse_args()
-    global fileListPath, sourcePath, outputPath, fileExtensions, standardsTimeout, bugsTimeout, maxRetries, retryDelay, language, checkDirs, checkType
+    global fileListPath, sourcePath, outputPath, fileExtensions, standardsTimeout, bugsTimeout, maxRetries, retryDelay, language, checkDirs, checkType, codePath
 
     if args.fileListPath == "":
         fileListPath = ""
@@ -1023,6 +1152,7 @@ if __name__ == "__main__":
         sourcePath = os.path.dirname(os.path.abspath(__file__))
     else:
         sourcePath = os.path.abspath(args.sourcePath)
+    codePath = os.path.abspath(args.codePath)
     checkDirs = args.checkDirs
     outputPath = os.path.abspath(args.outputPath)
     fileExtensions = get_language_extensions()[args.language]

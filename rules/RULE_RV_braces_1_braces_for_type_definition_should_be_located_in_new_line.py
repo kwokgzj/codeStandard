@@ -61,18 +61,29 @@ from nsiqunittest.nsiqcppstyle_unittestbase import *
 """
 函数起始花括号{ 需要单独一行
 """
-def functionRunRule(lexer, contextStack):
-    t = lexer.GetCurToken()
-    if t.type == "LBRACE":
-        prevToken = lexer.GetPrevTokenSkipWhiteSpaceAndCommentAndPreprocess()
-        if prevToken is not None and prevToken.lineno == t.lineno and contextStack.Peek().type == "BRACEBLOCK":
-            nsiqcppstyle_reporter.Error(
-                t,
-                __name__,
-                f"函数的左花括号需要单独一行",
-            )
+def functionRunRule(lexer, fullName, decl, contextStack, typeContext):
+    if not decl and typeContext is not None:
+        t = lexer.GetNextTokenInType("LBRACE", False, True)
+        if t is not None:
+            t2 = typeContext.endToken
+            if t2 is not None and t.lineno != t2.lineno:
+                prevToken = lexer.GetPrevTokenSkipWhiteSpaceAndCommentAndPreprocess()
+                # print contextStack.Peek()
+                if prevToken is not None and prevToken.lineno == t.lineno:
+                    nsiqcppstyle_reporter.Error(
+                        t,
+                        __name__,
+                        "函数的左花括号需要单独一行",
+                    )
+                if t2.lineno != t.lineno and GetRealColumn(t2) != GetRealColumn(t):
+                    nsiqcppstyle_reporter.Error(
+                        t2,
+                        __name__,
+                        "The brace for function definition should be located in same column",
+                    )
 
-ruleManager.AddFunctionScopeRule(functionRunRule)
+
+ruleManager.AddFunctionNameRule(functionRunRule)
 
 """
 类，结构体，枚举类型，命名空间的起始花括号{ 需要单独一行

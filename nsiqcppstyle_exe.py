@@ -237,7 +237,7 @@ def main():
             "C/C++": {"cpp", "h", "c", "hxx", "cxx", "hpp", "cc", "hh", "m", "mm"},
         }
 
-        console.Out.Ci(title)
+        # console.Out.Ci(title)
         runtimePath = GetRuntimePath()
         sys.path.append(runtimePath)
 
@@ -261,8 +261,8 @@ def main():
             nsiqcppstyle_reporter.StartTarget(targetPath)
             extLangMapCopy = copy.deepcopy(extLangMap)
             targetName = targetPath.name
-            console.Out.Ci(console.Separator)
-            console.Out.Ci(f"=  Analyzing {targetName} ")
+            # console.Out.Ci(console.Separator)
+            # console.Out.Ci(f"=  Analyzing {targetName} ")
 
             if filterPath != "":
                 filefilterPath = filterPath
@@ -294,9 +294,9 @@ def main():
             _nsiqcppstyle_state.varMap = filter.varMap
             nsiqcppstyle_reporter.ReportRules(ruleManager.availRuleNames, filter.nsiqCppStyleRules)
 
-            console.Out.Info(filter.to_string())
-            console.Out.Ci(console.Separator)
-            console.Out.Verbose(f"* run nsiqcppstyle analysis on {targetName}")
+            # console.Out.Info(filter.to_string())
+            # console.Out.Ci(console.Separator)
+            # console.Out.Verbose(f"* run nsiqcppstyle analysis on {targetName}")
 
             # if the target is file, analyze it without condition
             if targetPath.is_file():
@@ -329,7 +329,7 @@ def main():
             ruleManager.RunProjectRules(targetPath)
             nsiqcppstyle_reporter.EndTarget()
 
-        nsiqcppstyle_reporter.ReportSummaryToScreen(analyzedFiles, _nsiqcppstyle_state, filter)
+        # nsiqcppstyle_reporter.ReportSummaryToScreen(analyzedFiles, _nsiqcppstyle_state, filter)
         nsiqcppstyle_reporter.CloseReport(_nsiqcppstyle_state.output_format)
         ruleManager.RunSessionEndRules()
         return _nsiqcppstyle_state.error_count
@@ -344,7 +344,7 @@ def main():
 
 
 def ProcessFile(ruleManager, file, analyzedFiles):
-    console.Out.Info("Processing: ", file)
+    # console.Out.Info("Processing: ", file)
     nsiqcppstyle_checker.ProcessFile(ruleManager, file)
     analyzedFiles.append(file)
 

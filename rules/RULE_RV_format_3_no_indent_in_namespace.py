@@ -25,6 +25,8 @@ from nsiqcppstyle_rulehelper import *
 from nsiqcppstyle_rulemanager import *
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 
+# 用于存储已经报告过错误的命名空间
+reported_namespaces = set()
 
 def RunRule(lexer, contextStack):
     token = lexer.GetCurToken()
@@ -38,11 +40,14 @@ def RunRule(lexer, contextStack):
 
     # 检查是否在命名空间内
     if curContext is not None and curContext.type == "NAMESPACE_BLOCK":
-        # 获取当前行的缩进
-        line = lexer.GetCurTokenLine()
-        if line.startswith((" ", "\t")):
-            nsiqcppstyle_reporter.Error(token, __name__,
-                                        "命名空间内的代码不应该缩进")
-
+        # 检查此命名空间是否已经报告过错误
+        if curContext not in reported_namespaces:
+            # 获取当前行的缩进
+            line = lexer.GetCurTokenLine()
+            if line.startswith((" ", "\t")):
+                nsiqcppstyle_reporter.Error(token, __name__,
+                                          "命名空间内的代码不应该缩进")
+                # 标记该命名空间已报告错误
+                reported_namespaces.add(curContext)
 
 ruleManager.AddRule(RunRule)

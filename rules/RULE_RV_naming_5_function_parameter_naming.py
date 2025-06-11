@@ -34,16 +34,23 @@ def RunRule(lexer, fullName, decl, contextStack, context):
     t = lexer.GetNextToken()
 
     while t != rparen:
-        t = lexer.GetNextToken(True, True, True, True)
+        # 记录最后一个标识符
+        last_id = None
 
-        # 检查参数名称
-        if t.type == "ID":
-            param_name = t.value
+        # 读取直到遇到逗号或右括号
+        while t != rparen and t.type != "COMMA":
+            if t.type == "ID":
+                last_id = t
+            t = lexer.GetNextToken(True, True, True, True)
 
-            # 检查是否符合小驼峰命名
-            if not rv.is_camel_case(param_name):
-                nsiqcppstyle_reporter.Error(t, __name__,
-                                            f"函数 {fullName} 的参数 '{param_name}' 必须使用小驼峰命名法")
+        # 检查最后一个标识符（即参数名）
+        if last_id and not rv.is_camel_case(last_id.value):
+            nsiqcppstyle_reporter.Error(last_id, __name__,
+                                        f"函数 {fullName} 的参数 '{last_id.value}' 必须使用小驼峰命名法")
+
+        # 如果遇到逗号，继续处理下一个参数
+        if t.type == "COMMA":
+            t = lexer.GetNextToken(True, True, True, True)
 
 
 ruleManager.AddFunctionNameRule(RunRule)

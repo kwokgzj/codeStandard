@@ -80,19 +80,19 @@ class RuleManager:
             self.rollBackImporter.uninstall()
 
         self.rollBackImporter = RollbackImporter()
-        console.Out.Ci(console.Separator)
+        # console.Out.Ci(console.Separator)
 
         for ruleName in checkingRuleNames:
             count = self.availRuleNames.count(ruleName)
             if count == 0:
                 console.Out.Error(f"{ruleName} does not exist or incompatible.")
                 continue
-            console.Out.Info("  - ", ruleName, "is applied.")
+            # console.Out.Info("  - ", ruleName, "is applied.")
             ruleModule = __import__("rules." + ruleName)
             self.loadedRule.append(ruleModule)
         if len(self.loadedRule) == 0:
             console.Out.Ci("  No Rule is specified. Please configure rules in filefilter.txt.")
-        console.Out.Ci(console.Separator)
+        # console.Out.Ci(console.Separator)
 
     def ResetRules(self):
         self.loadedRule = []

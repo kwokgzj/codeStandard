@@ -6,7 +6,7 @@
  */
 
 // 测试1：全局变量
-int g_userCount = 0;        // 正确
+const int g_userCount = 0;        // 正确
 float g_maxValue = 100.0f;  // 正确
 bool userFlag;              // 错误：缺少g_前缀
 int g_MAX_VALUE;           // 错误：不是小驼峰
@@ -20,14 +20,23 @@ class TestClass {
 };
 
 // 测试3：函数中的局部变量
-void testFunction() {
-    if(true) {
+void testFunction(Founce flag, int Avalue) {
+    if(true)
+    {
         int localCounter = 0;}
+    for(int i = 0; i < 10; i++) {
+        float tempValue = 0.0f;
+    }
     int localCounter;       // 正确
     float tempValue;        // 正确
     bool m_isValid;        // 错误：局部变量不应使用m_前缀
     int g_count;           // 错误：局部变量不应使用g_前缀
     int User_Name;         // 错误：不是小驼峰
+}
+void Display::setRenderBoundingBox(const rv::RenderBoundingBox &AtRenderBoundingBox)
+{
+    const int mdkfdj = 1;
+    m_stRenderBoundingBox = stRenderBoundingBox;
 }
 
 // 测试4：复杂场景

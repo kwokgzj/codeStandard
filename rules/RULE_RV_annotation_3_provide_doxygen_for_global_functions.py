@@ -38,7 +38,7 @@ def RunRule(lexer, fullName, decl, contextStack, context):
 
     if t2 is None or (t3 is not None and t2.lexpos < t3.lexpos):
         nsiqcppstyle_reporter.Error(t, __name__,
-                                    f"全局函数 {fullName} 缺少文档注释")
+                                    f"全局函数 {fullName} 缺少注释")
         return
 
     if t2.additional not in ["DOXYGEN_JAVADOC", "DOXYGEN_QT", "DOXYGEN_CPP"]:
