@@ -9,8 +9,22 @@ static const QMap<ScanObject, int> g_objectPriorityMap = { { ScanObject::SCAN_OB
                                                            { ScanObject::SCAN_OBJECT_BODY, 4 },    { ScanObject::SCAN_OBJECT_BODY_LARGE, 5 },
                                                            { ScanObject::SCAN_OBJECT_LARGE, 6 } };
 
+enum EnumGroupInfoRoles
+{
+    DefaultConfigRole = Qt::UserRole + 1,
+};
+
+
+class XAPIAN_VISIBILITY_DEFAULT RSet {
+}
+
 // 测试1：正确的函数命名
 void sayHello() {              // 正确：小驼峰
+    setStyleSheet(R"(
+            background-color: #474747;
+            border-radius: 8px;
+            padding: 12px;
+        )");
 }
 
 void calculateSum() {          // 正确：小驼峰

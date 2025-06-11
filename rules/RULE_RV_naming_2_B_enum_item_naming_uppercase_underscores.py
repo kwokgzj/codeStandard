@@ -22,7 +22,10 @@ from nsiqcppstyle_rulemanager import *
 from nsiqunittest.nsiqcppstyle_unittestbase import *
 import util.review_util as rv
 
+g_last_lineno = None
+
 def RunRule(lexer, typeName, typeFullName, decl, contextStack, typeContext):
+    global g_last_lineno
     if not decl and typeName == "ENUM" and typeContext is not None:
         lexer._MoveToToken(typeContext.startToken)
         t2 = typeContext.endToken
@@ -33,16 +36,16 @@ def RunRule(lexer, typeName, typeFullName, decl, contextStack, typeContext):
                 break
 
             # 检查是否是枚举值（标识符）
-            if t.type == "ID":
+            if t.type == "ID" and t.lineno != g_last_lineno:
                 fullName = t.value
                 # 检查是否符合命名规范：全大写+下划线
                 if not rv.is_macro_name(fullName):
-                    print("不合规" + fullName)
                     nsiqcppstyle_reporter.Error(
                         t,
                         __name__,
-                        f"枚举值 {fullName} 不符合全大写、下划线命名规范.",
+                        f"枚举值 '{fullName}' 不符合全大写、下划线命名规范.",
                     )
+            g_last_lineno = t.lineno
 
 
 ruleManager.AddTypeNameRule(RunRule)

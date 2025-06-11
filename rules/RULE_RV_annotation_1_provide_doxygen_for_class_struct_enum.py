@@ -47,7 +47,7 @@ def classRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
         nsiqcppstyle_reporter.Error(
             t,
             __name__,
-            f"类({fullName})必须有注释.",
+            f"类 '{fullName}' 必须有注释.",
         )
 
 
@@ -71,7 +71,7 @@ def structRunRule(lexer, currentType, fullName, decl, contextStack, context):
         nsiqcppstyle_reporter.Error(
             t,
             __name__,
-            f"结构体({fullName})必须有注释.",
+            f"结构体 '{fullName}' 必须有注释.",
         )
 
 
@@ -95,7 +95,7 @@ def classRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
         nsiqcppstyle_reporter.Error(
             t,
             __name__,
-            f"枚举类型({fullName})必须有注释.",
+            f"枚举类型 '{fullName}' 必须有注释.",
         )
 
 

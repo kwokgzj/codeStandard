@@ -23,11 +23,10 @@ def RunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
     if not decl and currentType == "STRUCT" and typeContext is not None:
         t = lexer.GetCurToken()
         if not rv.is_pascal_case(fullName):
-            print("不合规" + fullName)
             nsiqcppstyle_reporter.Error(
                 t,
                 __name__,
-                f"结构体 {fullName} 不符合大驼峰命名规范.",
+                f"结构体 '{fullName}' 不符合大驼峰命名规范.",
             )
 
 ruleManager.AddTypeNameRule(RunRule)

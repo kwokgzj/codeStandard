@@ -24,11 +24,10 @@ def RunRule(lexer, contextStack):
         if d.type == "ID" and k2 is not None and k2.type in ["NUMBER", "STRING", "CHARACTOR"] and d.lineno == k2.lineno:
             fullName = d.value
             if not rv.is_macro_name(fullName):
-                print("不合规" + fullName)
                 nsiqcppstyle_reporter.Error(
                     t,
                     __name__,
-                    f"宏定义 {fullName} 不符合全大写、下划线命名规范.",
+                    f"宏定义 '{fullName}' 不符合全大写、下划线命名规范.",
                 )
 
 
