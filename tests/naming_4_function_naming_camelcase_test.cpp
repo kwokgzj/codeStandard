@@ -94,6 +94,17 @@ class Friend {
 class Virtual {
     virtual void render() {}         // 正确：小驼峰
     virtual void Render() {}         // 错误：首字母大写
+
+private:
+    int m_value;              // 正确：类成员变量使用m_前缀 + 小驼峰
+    /*
+     * 类成员变量使用m_前缀 + 大驼峰
+     */
+    int m_value1;
+    /**
+     * @brief 是否激活
+     */
+    bool m_isActive;
 };
 
 // 测试10：纯虚函数

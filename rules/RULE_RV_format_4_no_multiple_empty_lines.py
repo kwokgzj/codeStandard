@@ -41,11 +41,14 @@ def RunRule(lexer, line, lineno):
     if not Match(r"^\s*$", line):
         # 如果当前是非空行，且与上次非空行间隔超过2行，说明存在多个连续空行
         if g_last_line_no > 0 and (lineno - g_last_line_no) > 2:
-            nsiqcppstyle_reporter.Error(
-                DummyToken(lexer.filename, line, lineno, 0),
-                __name__,
-                f"第{g_last_line_no + 1}行到第{lineno - 1}行之间存在多个连续空行"
-            )
+            # 获取前一行内容
+            prev_line = lexer.lines[lineno - 1] if lineno - 1 < len(lexer.lines) else ""
+            if Match(r"^\s*$", prev_line):
+                nsiqcppstyle_reporter.Error(
+                    DummyToken(lexer.filename, line, lineno, 0),
+                    __name__,
+                    f"第{g_last_line_no + 1}行到第{lineno - 1}行之间存在多个连续空行"
+                )
         g_last_line_no = lineno
 
 

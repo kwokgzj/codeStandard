@@ -636,7 +636,7 @@ def DetectEncoding(file_path):
             detected_encoding = result['encoding']
 
             # 如果检测失败或置信度较低，使用常见编码列表
-            if not detected_encoding or result['confidence'] < 0.7:
+            if not detected_encoding or result['confidence'] < 0.9:
                 # 尝试常见编码
                 for encoding in ['utf-8', 'gbk', 'gb2312', 'ascii', 'iso-8859-1']:
                     try:
