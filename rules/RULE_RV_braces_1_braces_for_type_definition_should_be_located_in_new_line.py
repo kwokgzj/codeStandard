@@ -73,7 +73,7 @@ def functionRunRule(lexer, fullName, decl, contextStack, typeContext):
                     nsiqcppstyle_reporter.Error(
                         t,
                         __name__,
-                        f"函数的左花括号需要单独一行",
+                        f"函数 '{fullName}' 的左花括号需要单独一行",
                     )
 
 
@@ -94,7 +94,7 @@ def typeRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
                     nsiqcppstyle_reporter.Error(
                         t,
                         __name__,
-                        f"{fullName} 声明的左花括号需要单独一行",
+                        f"'{fullName}' 的左花括号需要单独一行",
                     )
                 # if t2.lineno != t.lineno and GetRealColumn(t2) != GetRealColumn(t):
                 #     nsiqcppstyle_reporter.Error(
@@ -121,7 +121,7 @@ def controlRunRule(lexer, contextStack):
                 nsiqcppstyle_reporter.Error(
                     t,
                     __name__,
-                    f"{t.type} 要与左花括号在同一行",
+                    f"左花括号要与 '{t.value}' 在同一行",
                 )
 
 ruleManager.AddFunctionScopeRule(controlRunRule)

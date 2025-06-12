@@ -801,7 +801,7 @@ def check_bugs(data, system_prompt, user_context):
                 # assistant_response = response.get('content')
                 assistant_response = response.content
                 # reasoning_content = response.get('reasoning_content')
-                reasoning_content = response.reasoning_content
+                # reasoning_content = response.reasoning_content
 
                 function_name, arguments = parse_tool_call(assistant_response)
                 if function_name:

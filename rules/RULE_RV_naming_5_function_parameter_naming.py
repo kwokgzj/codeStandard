@@ -46,7 +46,7 @@ def RunRule(lexer, fullName, decl, contextStack, context):
         # 检查最后一个标识符（即参数名）
         if last_id and not rv.is_camel_case(last_id.value):
             nsiqcppstyle_reporter.Error(last_id, __name__,
-                                        f"函数 {fullName} 的参数 '{last_id.value}' 必须使用小驼峰命名法")
+                                        f"参数 '{last_id.value}' 必须使用小驼峰命名法")
 
         # 如果遇到逗号，继续处理下一个参数
         if t.type == "COMMA":

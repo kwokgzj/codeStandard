@@ -27,6 +27,18 @@ def _is_var_declaration(t1, t2):
     """检查是否是变量声明"""
     return (_is_type_token(t1) and t2.type in ["SEMI", "EQUALS"])
 
+def _check_prev_const(lexer, t):
+    have_prev_const = False
+    while True:
+        prev_token = lexer.GetPrevTokenSkipWhiteSpaceAndCommentAndPreprocess()
+        if prev_token is None :
+            return have_prev_const
+        if prev_token.type == "CONST":
+            have_prev_const = True
+        if prev_token.type == "SEMI":
+            return have_prev_const
+    return False
+
 def RunRule(lexer, contextStack):
     t = lexer.GetCurToken()
     if t.type != "ID":
@@ -43,9 +55,10 @@ def RunRule(lexer, contextStack):
 
     # 全局变量检查
     if curContext is None or curContext.type in ["NAMESPACE_BLOCK"]:
-        if not rv.is_global_var_name(name):
-            nsiqcppstyle_reporter.Error(t, __name__,
-                f"全局变量 '{name}' 必须以'g_'为前缀并使用小驼峰命名法")
+        if not _check_prev_const(lexer, t):
+            if not rv.is_global_var_name(name):
+                nsiqcppstyle_reporter.Error(t, __name__,
+                    f"全局变量 '{name}' 必须以'g_'为前缀并使用小驼峰命名法")
     # 类成员变量检查
     elif curContext is None or curContext.type in ["CLASS_BLOCK"]:
         if not rv.is_member_var_name(name):

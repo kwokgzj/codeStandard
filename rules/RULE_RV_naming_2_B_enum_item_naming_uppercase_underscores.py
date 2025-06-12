@@ -43,7 +43,7 @@ def RunRule(lexer, typeName, typeFullName, decl, contextStack, typeContext):
                     nsiqcppstyle_reporter.Error(
                         t,
                         __name__,
-                        f"枚举值 '{fullName}' 不符合全大写、下划线命名规范.",
+                        f"枚举值 '{fullName}' 不符合全大写、下划线命名规范",
                     )
             g_last_lineno = t.lineno
 

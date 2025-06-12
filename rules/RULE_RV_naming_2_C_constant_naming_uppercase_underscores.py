@@ -21,20 +21,19 @@ from util.review_util import is_macro_name
 
 def RunRule(lexer, contextStack):
     t = lexer.GetCurToken()
-    if t.type == "CONST" or t.type == "CONSTEXPR":
+    # 检查 const 或 constexpr
+    if t.type == "CONST" and contextStack.SigPeek().type in ["NAMESPACE_BLOCK"]:
+        # 跳过类型、修饰符，找到变量名
         t2 = lexer.GetNextTokenSkipWhiteSpaceAndCommentAndPreprocess()
-        if t2 is None:
-            return
-
-        # 查找标识符（常量名）
-        while t2 is not None and t2.type != "ID":
+        while t2 is not None and t2.type not in ("ID", "SEMICOLON", "ASSIGN"):
             t2 = lexer.GetNextTokenSkipWhiteSpaceAndCommentAndPreprocess()
-            if t2 is None:
-                return
-
-        if t2 and not is_macro_name(t2.value):
-            nsiqcppstyle_reporter.Error(t2, __name__,
-                                        f"常量 {t2.value} 必须全大写，并使用下划线分割单词")
-
+        # 检查变量名
+        if t2 and t2.type == "ID" and not is_macro_name(t2.value):
+            # 检查命名规范
+            if not (t2.value.isupper() and "_" in t2.value):
+                nsiqcppstyle_reporter.Error(
+                    t2, __name__,
+                    f"常量 '{t2.value}' 不符合全大写、下划线命名规范"
+                )
 
 ruleManager.AddRule(RunRule)

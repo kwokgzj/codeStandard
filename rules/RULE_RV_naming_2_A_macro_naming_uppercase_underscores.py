@@ -27,7 +27,7 @@ def RunRule(lexer, contextStack):
                 nsiqcppstyle_reporter.Error(
                     t,
                     __name__,
-                    f"宏定义 '{fullName}' 不符合全大写、下划线命名规范.",
+                    f"宏定义 '{fullName}' 不符合全大写、下划线命名规范",
                 )
 
 

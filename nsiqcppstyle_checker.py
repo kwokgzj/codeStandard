@@ -933,7 +933,10 @@ class CppLexerNavigator:
         with open(file_path, 'rb') as f:
             raw_data = f.read()
             result = chardet.detect(raw_data)
-            return result['encoding']
+            if result['encoding'] is not None and result['confidence'] > 0.9:
+                return result['encoding']
+            else:
+                return "utf-8"
 
 
 class Context:

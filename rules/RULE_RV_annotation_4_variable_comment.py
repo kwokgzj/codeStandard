@@ -51,14 +51,32 @@ def _check_prev_comment(lexer, t):
 
 def _check_comment_divide(lexer, t):
     line_text = ""
+    next_time = 0;
     while True:
+        lexer.PushTokenIndex()
+        next_time += 1
         next_token = lexer.GetNextToken(False, False, False)
         if next_token is None or next_token.lineno != t.lineno:
             break
         if next_token.value != ";":
             line_text += next_token.value
+    while next_time > 0:
+        lexer.PopTokenIndex()
+        next_time -= 1
     if line_text.lstrip().startswith("//"):
         return True
+
+def _check_prev_const(lexer, t):
+    have_prev_const = False
+    while True:
+        prev_token = lexer.GetPrevTokenSkipWhiteSpaceAndCommentAndPreprocess()
+        if prev_token is None :
+            return have_prev_const
+        if prev_token.type == "CONST":
+            have_prev_const = True
+        if prev_token.type == "SEMI":
+            return have_prev_const
+    return False
 
 def RunRule(lexer, contextStack):
     lexer.PushTokenIndex()
@@ -78,13 +96,14 @@ def RunRule(lexer, contextStack):
 
     # 全局变量注释检查
     if curContext is None or curContext.type in ["NAMESPACE_BLOCK"]:
-        if name.startswith("g_") and not _check_prev_comment(lexer, t) and not _check_comment_divide(lexer, t) and not _check_next_comment(lexer, t):
-            nsiqcppstyle_reporter.Error(t, __name__,
-                f"全局变量 '{name}' 必须有注释")
+        if not _check_prev_comment(lexer, t) and not _check_comment_divide(lexer, t) and not _check_next_comment(lexer, t):
+            if not _check_prev_const(lexer, t):
+                nsiqcppstyle_reporter.Error(t, __name__,
+                    f"全局变量 '{name}' 必须有注释")
 
     # 类成员变量注释检查
     elif curContext is None or curContext.type in ["CLASS_BLOCK"]:
-        if name.startswith("m_") and not _check_prev_comment(lexer, t) and not _check_comment_divide(lexer, t) and not _check_next_comment(lexer, t):
+        if  not _check_prev_comment(lexer, t) and not _check_comment_divide(lexer, t) and not _check_next_comment(lexer, t):
             nsiqcppstyle_reporter.Error(t, __name__,
                 f"类成员变量 '{name}' 必须有注释")
 

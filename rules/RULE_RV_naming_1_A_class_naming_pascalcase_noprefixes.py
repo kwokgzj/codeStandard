@@ -27,7 +27,7 @@ def RunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
             nsiqcppstyle_reporter.Error(
                 t,
                 __name__,
-                f"类 '{fullName}' 不符合大驼峰命名规范.",
+                f"类 '{fullName}' 不符合大驼峰命名规范",
             )
 
 ruleManager.AddTypeNameRule(RunRule)

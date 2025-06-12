@@ -9,6 +9,34 @@ static const QMap<ScanObject, int> g_objectPriorityMap = { { ScanObject::SCAN_OB
                                                            { ScanObject::SCAN_OBJECT_BODY, 4 },    { ScanObject::SCAN_OBJECT_BODY_LARGE, 5 },
                                                            { ScanObject::SCAN_OBJECT_LARGE, 6 } };
 
+#include <iostream>
+using namespace std;
+
+const //dfdf
+ aa::int GLOBAL_CONST = 100;
+
+class MyClass {
+public:
+    const int CLASS_CONST; // 类成员常量
+    MyClass( int val) : CLASS_CONST(val) {} // 构造函数初始化类成员常量
+};
+
+int main() { // 3. 局部作用域常量
+const int LOCAL_CONST = 50;
+
+MyClass obj(200);
+
+int a = 10;
+int b = 20;
+
+const int* ptr1 = &a;       // 指向常量的指针（指针可以改变，指向的内容不能改）
+int* const ptr2 = &b;       // 常量指针（指针不能改变，指向的内容可以改）
+    const int*
+    const ptr3 = &a; // 指向常量的常量指针（指针和内容都不能改）
+
+return 0;
+}
+
 enum EnumGroupInfoRoles
 {
     DefaultConfigRole = Qt::UserRole + 1,
@@ -16,6 +44,7 @@ enum EnumGroupInfoRoles
 
 
 class XAPIAN_VISIBILITY_DEFAULT RSet {
+    explicit GroupInfoModel(const QList<GroupInfo>& itemList, QObject *parent = nullptr);
 }
 
 // 测试1：正确的函数命名
