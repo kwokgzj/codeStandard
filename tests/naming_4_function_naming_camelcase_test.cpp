@@ -56,6 +56,8 @@ void sayHello() {              // 正确：小驼峰
             border-radius: 8px;
             padding: 12px;
         )");
+    if(true)
+        int temp = 0;
 }
 
 void calculateSum() {          // 正确：小驼峰
@@ -132,7 +134,8 @@ inline void updateCache() {          // 正确：小驼峰
 }
 
 inline void Update_Cache() {         // 错误：下划线和大写
-    if(true) {
+    if(true)
+    {
         int temp = 0;}
 }
 
