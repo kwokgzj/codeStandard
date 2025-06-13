@@ -9,6 +9,8 @@ static const QMap<ScanObject, int> g_objectPriorityMap = { { ScanObject::SCAN_OB
                                                            { ScanObject::SCAN_OBJECT_BODY, 4 },    { ScanObject::SCAN_OBJECT_BODY_LARGE, 5 },
                                                            { ScanObject::SCAN_OBJECT_LARGE, 6 } };
 
+void sayHello();
+
 #include <iostream>
 using namespace std;
 

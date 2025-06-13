@@ -852,7 +852,7 @@ def check_bugs(data, system_prompt, user_context):
         entry_time = time.time() - entry_start_time
         elapsed_time = time.time() - total_start_time
         if (successCount == 0):
-            avg_time_per_file = 60
+            avg_time_per_file = 5
         else:
             avg_time_per_file = elapsed_time / successCount
         remaining_files = total_files - i

@@ -20,7 +20,7 @@ from nsiqcppstyle_rulemanager import *
 
 
 def RunRule(lexer, fullName, decl, contextStack, context):
-    if decl:
+    if not decl:
         return
 
     # 只检查全局函数
@@ -30,6 +30,15 @@ def RunRule(lexer, fullName, decl, contextStack, context):
     t = lexer.GetCurToken()
     if IsOperator(t.value):
         return
+
+    # lexer.PushTokenIndex()
+    # next_rparen = lexer.GetNextTokenInType("RPAREN")
+    # print(next_rparen.value)
+    # next_token = lexer.PeekNextTokenSkipWhiteSpaceAndCommentAndPreprocess()
+    # if next_token.type in ["LBRACE"]:
+    #     lexer.PopTokenIndex()
+    #     return
+    # lexer.PopTokenIndex()
 
     lexer.PushTokenIndex()
     t2 = lexer.GetPrevTokenInType("COMMENT")

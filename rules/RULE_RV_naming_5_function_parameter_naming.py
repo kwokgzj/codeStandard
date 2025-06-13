@@ -22,6 +22,8 @@ import util.review_util as rv
 
 
 def RunRule(lexer, fullName, decl, contextStack, context):
+    if not decl:
+        return
     # 查找左括号
     lexer.GetNextTokenInType("LPAREN", False, True)
 
