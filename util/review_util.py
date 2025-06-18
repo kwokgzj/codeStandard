@@ -94,8 +94,8 @@ def is_macro_name(string):
     if not string:
         return False
 
-    # 检查是否以字母开头（不能以数字或下划线开头）
-    if not string[0].isalpha():
+    # 检查是否以非数字开头（不能以数字开头）
+    if string[0].isdigit():
         return False
 
     # 检查是否只包含大写字母、数字和下划线
@@ -106,14 +106,11 @@ def is_macro_name(string):
     if '__' in string:
         return False
 
-    # 检查是否以下划线结尾
-    if string.endswith('_'):
-        return False
-
-    # 使用更宽松的正则表达式进行检查
-    # 允许数字前后都可以有下划线
-    pattern = r'^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'
-    return bool(re.match(pattern, string))
+    # # 使用更宽松的正则表达式进行检查
+    # # 允许数字前后都可以有下划线
+    # pattern = r'^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'
+    # return bool(re.match(pattern, string))
+    return True
 
 def is_member_var_name(string):
     """

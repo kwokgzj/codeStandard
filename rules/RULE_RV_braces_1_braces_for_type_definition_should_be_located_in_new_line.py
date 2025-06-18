@@ -115,7 +115,7 @@ def controlRunRule(lexer, contextStack):
 
     # 识别控制语句关键字
     if t.type in ["IF", "ELSE", "FOR", "WHILE", "SWITCH", "TRY", "DO"]:
-        next_token = lexer.GetPrevTokenSkipWhiteSpaceAndCommentAndPreprocess(True, True, True)
+        next_token = lexer.GetNextTokenSkipWhiteSpaceAndCommentAndPreprocess(True, True, True)
         if t is not None and next_token is not None and next_token.type == "LBRACE":
             if next_token.lineno != t.lineno:
                 nsiqcppstyle_reporter.Error(

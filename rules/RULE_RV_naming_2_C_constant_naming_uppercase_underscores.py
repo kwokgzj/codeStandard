@@ -21,6 +21,11 @@ from util.review_util import is_macro_name
 
 def RunRule(lexer, contextStack):
     t = lexer.GetCurToken()
+    lexer.PushTokenIndex()
+    t_prev = lexer.GetPrevTokenSkipWhiteSpaceAndCommentAndPreprocess()
+    lexer.PopTokenIndex()
+    if t_prev is not None and t_prev.type in ["LPAREN", "COMMA"]:
+        return
     # 检查 const 或 constexpr
     if t.type == "CONST" and contextStack.SigPeek().type in ["NAMESPACE_BLOCK"]:
         # 跳过类型、修饰符，找到变量名

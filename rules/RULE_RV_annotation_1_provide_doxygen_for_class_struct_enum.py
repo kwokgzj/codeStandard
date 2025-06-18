@@ -33,7 +33,9 @@ from nsiqunittest.nsiqcppstyle_unittestbase import *
 类必须注释
 """
 def classRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
-    if not decl and currentType == "CLASS" and typeContext is not None:
+    if not decl:
+        return
+    if currentType == "CLASS" and typeContext is not None:
         t = lexer.GetCurToken()
         lexer.PushTokenIndex()
         t2 = lexer.GetPrevTokenInType("COMMENT")
@@ -57,7 +59,9 @@ ruleManager.AddTypeNameRule(classRunRule)
 结构体必须注释
 """
 def structRunRule(lexer, currentType, fullName, decl, contextStack, context):
-    if not decl and currentType in ("STRUCT", "UNION") and context is not None:
+    if not decl:
+        return
+    if currentType in ("STRUCT", "UNION") and context is not None:
         t = lexer.GetCurToken()
         lexer.PushTokenIndex()
         t2 = lexer.GetPrevTokenInType("COMMENT")
@@ -81,7 +85,9 @@ ruleManager.AddTypeNameRule(structRunRule)
 枚举类型必须注释
 """
 def classRunRule(lexer, currentType, fullName, decl, contextStack, typeContext):
-    if not decl and currentType == "ENUM" and typeContext is not None:
+    if not decl:
+        return
+    if currentType == "ENUM" and typeContext is not None:
         t = lexer.GetCurToken()
         lexer.PushTokenIndex()
         t2 = lexer.GetPrevTokenInType("COMMENT")
